@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -76,11 +77,12 @@ export default function CategoryScroll({ categories }: { categories: Category[] 
                     >
                         <div className="bg-white rounded-xl p-4 shadow hover:shadow-lg transition text-center border border-gray-100 w-32 h-36 flex flex-col items-center justify-center">
                             {category.image && (
-                                <div className="w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
-                                    <img
+                                <div className="relative w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
+                                    <Image
                                         src={category.image}
                                         alt={category.name}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition"
+                                        fill
+                                        className="object-cover group-hover:scale-110 transition"
                                     />
                                 </div>
                             )}

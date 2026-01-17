@@ -1,9 +1,12 @@
 import prisma from "@/lib/prisma";
+import { Product } from "@prisma/client";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { ArrowLeft } from "lucide-react";
+import { getSiteSettings } from "@/lib/settings";
 
 async function getCategoryWithProducts(slug: string) {
     const category = await prisma.category.findUnique({
@@ -23,7 +26,10 @@ export default async function CategoryPage({
 }: {
     params: { slug: string };
 }) {
-    const category = await getCategoryWithProducts(params.slug);
+    const [category, settings] = await Promise.all([
+        getCategoryWithProducts(params.slug),
+        getSiteSettings()
+    ]);
 
     if (!category) {
         notFound();
@@ -31,7 +37,7 @@ export default async function CategoryPage({
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <Navbar />
+            <Navbar siteName={settings.siteName} />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <Link
@@ -59,7 +65,7 @@ export default async function CategoryPage({
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {category.products.map((product) => {
+                        {category.products.map((product: Product) => {
                             const imageUrl = product.images ? product.images.split(",")[0] : "";
 
                             return (
@@ -70,11 +76,12 @@ export default async function CategoryPage({
                                 >
                                     <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition">
                                         {imageUrl && (
-                                            <div className="aspect-square overflow-hidden bg-gray-100">
-                                                <img
+                                            <div className="relative aspect-square overflow-hidden bg-gray-100">
+                                                <Image
                                                     src={imageUrl}
                                                     alt={product.name}
-                                                    className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                                                    fill
+                                                    className="object-cover group-hover:scale-110 transition duration-300"
                                                 />
                                             </div>
                                         )}
@@ -87,7 +94,7 @@ export default async function CategoryPage({
                                             </p>
                                             <div className="flex items-center justify-between">
                                                 <span className="text-2xl font-bold text-purple-600">
-                                                    ${product.price.toFixed(2)}
+                                                    {settings.currencySymbol}{product.price.toFixed(2)}
                                                 </span>
                                                 <span className="text-purple-600 group-hover:translate-x-1 transition">
                                                     →

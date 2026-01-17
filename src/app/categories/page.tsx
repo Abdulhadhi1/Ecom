@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
+import { CategoryWithCount } from "@/lib/types";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 
@@ -39,7 +41,7 @@ export default async function CategoriesPage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {categories.map((category) => (
+                        {categories.map((category: CategoryWithCount) => (
                             <Link
                                 key={category.id}
                                 href={`/category/${category.slug}`}
@@ -47,11 +49,12 @@ export default async function CategoriesPage() {
                             >
                                 <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition text-center border border-gray-100 h-48 flex flex-col items-center justify-center">
                                     {category.image && (
-                                        <div className="w-20 h-20 mb-4 rounded-full overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
-                                            <img
+                                        <div className="relative w-20 h-20 mb-4 rounded-full overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
+                                            <Image
                                                 src={category.image}
                                                 alt={category.name}
-                                                className="w-full h-full object-cover group-hover:scale-110 transition"
+                                                fill
+                                                className="object-cover group-hover:scale-110 transition"
                                             />
                                         </div>
                                     )}

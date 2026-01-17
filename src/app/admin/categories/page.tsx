@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+import { CategoryWithCount } from "@/lib/types";
 import { getCategories } from "./actions";
 import { Plus, Edit } from "lucide-react";
 import DeleteButton from "./delete-button";
@@ -48,16 +50,19 @@ export default async function CategoriesPage() {
                                 </td>
                             </tr>
                         ) : (
-                            categories.map((category) => (
+                            categories.map((category: CategoryWithCount) => (
                                 <tr key={category.id} className="hover:bg-slate-50 transition">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
                                             {category.image && (
-                                                <img
-                                                    src={category.image}
-                                                    alt={category.name}
-                                                    className="w-12 h-12 rounded-lg object-cover"
-                                                />
+                                                <div className="relative w-12 h-12 rounded-lg overflow-hidden">
+                                                    <Image
+                                                        src={category.image}
+                                                        alt={category.name}
+                                                        fill
+                                                        className="object-cover"
+                                                    />
+                                                </div>
                                             )}
                                             <span className="font-medium text-gray-900">
                                                 {category.name}

@@ -1,9 +1,12 @@
 import prisma from "@/lib/prisma";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import { ArrowLeft, ShoppingCart } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Hash } from "lucide-react";
+import { getSiteSettings } from "@/lib/settings";
+import SizeSelector from "@/components/size-selector";
 
 async function getProduct(slug: string) {
     const product = await prisma.product.findUnique({
@@ -21,7 +24,10 @@ export default async function ProductPage({
 }: {
     params: { slug: string };
 }) {
-    const product = await getProduct(params.slug);
+    const [product, settings] = await Promise.all([
+        getProduct(params.slug),
+        getSiteSettings()
+    ]);
 
     if (!product) {
         notFound();
@@ -31,7 +37,7 @@ export default async function ProductPage({
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50">
-            <Navbar />
+            <Navbar siteName={settings.siteName} />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <Link
@@ -47,24 +53,27 @@ export default async function ProductPage({
                     <div className="lg:col-span-5 space-y-4">
                         {imageUrls.length > 0 ? (
                             <>
-                                <div className="aspect-square rounded-2xl overflow-hidden bg-white shadow-2xl">
-                                    <img
+                                <div className="relative aspect-square rounded-2xl overflow-hidden bg-white shadow-2xl">
+                                    <Image
                                         src={imageUrls[0]}
                                         alt={product.name}
-                                        className="w-full h-full object-cover"
+                                        fill
+                                        className="object-cover"
+                                        priority
                                     />
                                 </div>
                                 {imageUrls.length > 1 && (
                                     <div className="grid grid-cols-4 gap-4">
-                                        {imageUrls.slice(1, 5).map((url, index) => (
+                                        {imageUrls.slice(1, 5).map((url: string, index: number) => (
                                             <div
                                                 key={index}
-                                                className="aspect-square rounded-lg overflow-hidden bg-white shadow-lg"
+                                                className="relative aspect-square rounded-lg overflow-hidden bg-white shadow-lg"
                                             >
-                                                <img
+                                                <Image
                                                     src={url}
                                                     alt={`${product.name} ${index + 2}`}
-                                                    className="w-full h-full object-cover"
+                                                    fill
+                                                    className="object-cover"
                                                 />
                                             </div>
                                         ))}
@@ -89,15 +98,26 @@ export default async function ProductPage({
                             </Link>
                         </div>
 
-                        <h1 className="text-5xl font-bold text-gray-900 mb-6">
+                        <h1 className="text-5xl font-bold text-gray-900 mb-2">
                             {product.name}
                         </h1>
 
+                        {product.sku && (
+                            <div className="flex items-center gap-2 text-gray-500 mb-6 font-medium">
+                                <Hash className="w-4 h-4" />
+                                <span>SKU: {product.sku}</span>
+                            </div>
+                        )}
+
                         <div className="mb-8">
                             <span className="text-5xl font-bold text-purple-600">
-                                ${product.price.toFixed(2)}
+                                {settings.currencySymbol}{product.price.toFixed(2)}
                             </span>
                         </div>
+
+                        {product.sizes && (
+                            <SizeSelector sizes={product.sizes} />
+                        )}
 
                         <div className="mb-8">
                             <h2 className="text-xl font-semibold text-gray-900 mb-3">

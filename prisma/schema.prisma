@@ -35,7 +35,15 @@ model Product {
   price       Float
   description String
   images      String // Stores JSON array or comma-separated URLs
+  sku         String?
+  sizes       String? // Stores comma-separated sizes like "S,M,L,XL"
   category    Category @relation(fields: [categoryId], references: [id])
   categoryId  String
   createdAt   DateTime @default(now())
+}
+
+model SiteConfig {
+  id             String @id @default("default")
+  currencySymbol String @default("$")
+  siteName       String @default("E-Store")
 }

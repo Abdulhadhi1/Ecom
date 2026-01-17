@@ -1,10 +1,16 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getProducts } from "./actions";
 import { Plus, Edit } from "lucide-react";
 import DeleteButton from "./delete-button";
+import { getSiteSettings } from "@/lib/settings";
+import { ProductWithCategory } from "@/lib/types";
 
 export default async function ProductsPage() {
-    const products = await getProducts();
+    const [products, settings] = await Promise.all([
+        getProducts(),
+        getSiteSettings()
+    ]);
 
     return (
         <div>
@@ -28,7 +34,7 @@ export default async function ProductsPage() {
                         No products yet. Create your first product!
                     </div>
                 ) : (
-                    products.map((product) => {
+                    products.map((product: ProductWithCategory) => {
                         const imageUrl = product.images ? product.images.split(",")[0] : "";
 
                         return (
@@ -37,11 +43,12 @@ export default async function ProductsPage() {
                                 className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition group"
                             >
                                 {imageUrl && (
-                                    <div className="aspect-square overflow-hidden bg-gray-100">
-                                        <img
+                                    <div className="relative aspect-square overflow-hidden bg-gray-100">
+                                        <Image
                                             src={imageUrl}
                                             alt={product.name}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition duration-300"
                                         />
                                     </div>
                                 )}
@@ -51,15 +58,20 @@ export default async function ProductsPage() {
                                             {product.category.name}
                                         </span>
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                                    <h3 className="text-xl font-bold text-gray-900 mb-1">
                                         {product.name}
                                     </h3>
+                                    {product.sku && (
+                                        <p className="text-xs font-mono text-gray-400 mb-2">
+                                            SKU: {product.sku}
+                                        </p>
+                                    )}
                                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                                         {product.description}
                                     </p>
                                     <div className="flex items-center justify-between">
                                         <span className="text-2xl font-bold text-purple-600">
-                                            ${product.price.toFixed(2)}
+                                            {settings.currencySymbol}{product.price.toFixed(2)}
                                         </span>
                                         <div className="flex items-center gap-2">
                                             <Link

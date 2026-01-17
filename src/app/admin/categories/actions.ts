@@ -3,11 +3,19 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { saveFile } from "@/lib/upload";
 
 export async function createCategory(formData: FormData) {
     const name = formData.get("name") as string;
     const slug = formData.get("slug") as string;
     const image = formData.get("image") as string;
+    const uploadImage = formData.get("uploadImage") as File;
+
+    let finalImageUrl = image;
+
+    if (uploadImage && uploadImage.size > 0) {
+        finalImageUrl = await saveFile(uploadImage);
+    }
 
     if (!name || !slug) {
         throw new Error("Name and slug are required");
@@ -17,7 +25,7 @@ export async function createCategory(formData: FormData) {
         data: {
             name,
             slug,
-            image: image || null,
+            image: finalImageUrl || null,
         },
     });
 
@@ -29,6 +37,13 @@ export async function updateCategory(id: string, formData: FormData) {
     const name = formData.get("name") as string;
     const slug = formData.get("slug") as string;
     const image = formData.get("image") as string;
+    const uploadImage = formData.get("uploadImage") as File;
+
+    let finalImageUrl = image;
+
+    if (uploadImage && uploadImage.size > 0) {
+        finalImageUrl = await saveFile(uploadImage);
+    }
 
     if (!name || !slug) {
         throw new Error("Name and slug are required");
@@ -39,7 +54,7 @@ export async function updateCategory(id: string, formData: FormData) {
         data: {
             name,
             slug,
-            image: image || null,
+            image: finalImageUrl || null,
         },
     });
 

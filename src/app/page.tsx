@@ -1,8 +1,11 @@
 import prisma from "@/lib/prisma";
+import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/navbar";
 import CategoryScroll from "@/components/category-scroll";
 import Footer from "@/components/footer";
+import { getSiteSettings } from "@/lib/settings";
+import { ProductWithCategory } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -24,11 +27,14 @@ async function getFeaturedData() {
 }
 
 export default async function HomePage() {
-  const { categories, products } = await getFeaturedData();
+  const [{ categories, products }, settings] = await Promise.all([
+    getFeaturedData(),
+    getSiteSettings()
+  ]);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+      <Navbar siteName={settings.siteName} />
 
       {/* Categories Section */}
       {categories.length > 0 && (
@@ -60,7 +66,7 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {products.map((product) => {
+            {products.map((product: ProductWithCategory) => {
               const imageUrl = product.images ? product.images.split(",")[0] : "";
 
               return (
@@ -72,10 +78,11 @@ export default async function HomePage() {
                   <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition">
                     {imageUrl && (
                       <div className="aspect-square overflow-hidden bg-gray-100">
-                        <img
+                        <Image
                           src={imageUrl}
                           alt={product.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                          fill
+                          className="object-cover group-hover:scale-110 transition duration-300"
                         />
                       </div>
                     )}
@@ -91,7 +98,7 @@ export default async function HomePage() {
                       </p>
                       <div className="flex items-center justify-between">
                         <span className="text-2xl font-bold text-purple-600">
-                          ${product.price.toFixed(2)}
+                          {settings.currencySymbol}{product.price.toFixed(2)}
                         </span>
                         <span className="text-purple-600 group-hover:translate-x-1 transition">
                           →

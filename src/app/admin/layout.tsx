@@ -11,6 +11,7 @@ import {
     Menu,
     X,
     ShoppingBag,
+    Settings,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -18,6 +19,7 @@ const navItems = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { name: "Categories", href: "/admin/categories", icon: FolderOpen },
     { name: "Products", href: "/admin/products", icon: Package },
+    { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 export default function AdminLayout({
