@@ -4,6 +4,8 @@ import Navbar from "@/components/navbar";
 import CategoryScroll from "@/components/category-scroll";
 import Footer from "@/components/footer";
 
+export const dynamic = "force-dynamic";
+
 async function getFeaturedData() {
   const [categories, products] = await Promise.all([
     prisma.category.findMany({
