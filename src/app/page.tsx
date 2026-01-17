@@ -77,7 +77,7 @@ export default async function HomePage() {
                 >
                   <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition">
                     {imageUrl && (
-                      <div className="aspect-square overflow-hidden bg-gray-100">
+                      <div className="relative aspect-square overflow-hidden bg-gray-100">
                         <Image
                           src={imageUrl}
                           alt={product.name}

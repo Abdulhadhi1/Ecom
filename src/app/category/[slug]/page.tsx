@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Product } from "@prisma/client";
+
+export const dynamic = "force-dynamic";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";

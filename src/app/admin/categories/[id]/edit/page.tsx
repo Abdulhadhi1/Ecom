@@ -2,6 +2,8 @@ import { getCategoryById, updateCategory } from "../../actions";
 import { redirect } from "next/navigation";
 import CategoryForm from "../../category-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function EditCategoryPage({
     params,
 }: {

@@ -5,6 +5,8 @@ import { CategoryWithCount } from "@/lib/types";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 
+export const dynamic = "force-dynamic";
+
 async function getAllCategories() {
     const categories = await prisma.category.findMany({
         orderBy: { name: "asc" },

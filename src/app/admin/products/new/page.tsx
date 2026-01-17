@@ -2,6 +2,8 @@ import { createProduct } from "../actions";
 import { getCategories } from "../../categories/actions";
 import ProductForm from "../product-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function NewProductPage() {
     const categories = await getCategories();
 
